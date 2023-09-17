@@ -1,0 +1,124 @@
+--1
+CREATE TABLE Raca
+(
+	IDRaca int not null identity,
+	Nome varchar (100) not null,
+	Descricao varchar (500), 
+	Origem varchar (150) not null, 
+	Perdido datetime,
+	CONSTRAINT PKIDRaca PRIMARY KEY (IDRaca)
+)
+
+select * from Raca
+
+CREATE TABLE Habilidade
+(
+	IDHabilidade int not null identity,
+	Nome varchar (200) not null,
+	MultiplicadorPoder int
+	CONSTRAINT PKIDHabiidade PRIMARY KEY (IDHabilidade)
+)
+
+select * from Habilidade
+
+CREATE TABLE Classe
+(
+	IDClasse int not null identity,
+	Nome varchar (100) not null,
+	Caracteristicas varchar (1000),
+	IDHabilidade int,
+	CONSTRAINT PKIDClasse PRIMARY KEY (IDClasse),
+	CONSTRAINT FKIDHabilidade FOREIGN KEY (IDHabilidade) REFERENCES Habilidade (IDHabilidade)
+)
+
+select * from Classe
+
+CREATE TABLE Personagem
+(
+	IDPersonagem int not null identity,
+	Nome varchar (100) not null,
+	Descricao varchar (500),
+	DataNascimento datetime not null,
+	IDRaca int not null,
+	IDClasse int not null,
+	CONSTRAINT PKIDPersonagem PRIMARY KEY (IDPersonagem),
+	CONSTRAINT FKIDRaca FOREIGN KEY (IDRaca) REFERENCES Raca (IDRaca),
+	CONSTRAINT FKIDClasse FOREIGN KEY (IDClasse) REFERENCES Classe (IDClasse)
+)
+
+select * from Personagem
+
+--2
+
+ALTER TABLE Personagem ADD Poder int not null
+select * from Personagem
+
+--3
+
+ALTER TABLE Classe ALTER COLUMN Caracteristicas varchar (500)
+select * from Classe
+
+--4
+
+ALTER TABLE Raca DROP COLUMN Perdido
+select * from Raca
+
+--5
+
+--Raca
+
+INSERT INTO Raca (Nome, Descricao, Origem)
+VALUES 
+	('Humano', 'Nos confins da maioria dos mundos, os humanos são a mais jovem das raças comuns, chegando mais tarde no cenário mundial e com uma vida curta, se comparados aos anões, elfos e dragões.', 'Aglarond'),
+	('Orc', 'Orcs são incursores selvagens e saqueadores com posturas encurvadas, testas baixas e faces de porco com caninos inferiores proeminentes que se assemelham a presas de um javali.', 'Draenor'),
+	('Gnomo', 'Gnomos regozijam a vida, apreciando cada momento de invento, exploração, investigação, criação e brincadeira.', 'Floresta de Yuir')
+
+select * from Raca
+
+INSERT INTO Habilidade(Nome, MultiplicadorPoder)
+VALUES 
+	('Ataque Furtivo', 3),
+	('Arquearia', 2),
+	('Força da Natureza', 2)
+
+select * from Habilidade
+
+INSERT INTO Classe (Nome, Caracteristicas, IDHabilidade)
+VALUES
+	('Ladino', 'Ladinos contam com sua perícia, furtividade e as vulnerabilidades de seus inimigos para obter vantagem em qualquer situação.', (SELECT IDHabilidade FROM Habilidade WHERE Nome = 'Ataque Furtivo')),
+	('Guerreiro', null, (SELECT IDHabilidade FROM Habilidade WHERE Nome = 'Arquearia')),
+	('Druida', 'Quer seja convocando as forças elementais da natureza, ou emulando as criaturas do mundo animal, os druidas são encarnações da resistência, astúcia e fúria da natureza.', (SELECT IDHabilidade FROM Habilidade WHERE Nome = 'Força da natureza'))
+
+select * from Classe
+
+INSERT INTO Personagem (Nome, Descricao, DataNascimento, IDRaca, IDClasse, Poder)
+VALUES
+	('Grim', 'Um chondathano de pele morena, cabelos castanhos, quase loiros, alto e olhos verdes.', '1969-08-16',(SELECT IDRaca FROM Raca WHERE Nome = 'Humano'), (SELECT IDClasse FROM Classe WHERE Nome = 'Guerreiro'), 60),
+	('Lia', 'Lia possui um tom de pele branco-azulado, estatura média, cabelos loiros e olhos azuis', '1876-02-28', (SELECT IDRaca FROM Raca WHERE Nome = 'Orc'), (SELECT IDClasse FROM Classe WHERE Nome = 'Ladino'), 55),
+	('Alvyn', 'Aproximadamente 90cm de altura, moreno, com cabelos e olhos escuros', '1962-05-06',(SELECT IDRaca FROM Raca WHERE Nome = 'Gnomo'), (SELECT IDClasse FROM Classe WHERE Nome = 'Druida'), 80)
+
+select * from Personagem
+
+--6
+
+UPDATE Classe SET Caracteristicas = 'Caracteristicas Gerais' WHERE Caracteristicas IS NULL
+select * from Classe
+
+--7
+
+DELETE FROM Personagem WHERE YEAR(DataNascimento) BETWEEN 1960 AND 1970
+select * from Personagem
+
+--8
+
+SELECT * FROM Classe
+
+--9
+
+SELECT Nome, DataNascimento, Poder FROM Personagem WHERE Poder BETWEEN 0 AND 75
+select * from Personagem
+
+--10
+
+SELECT Nome, Descricao, Origem FROM Raca WHERE Nome LIKE '%Orc%'
+select * from Raca
