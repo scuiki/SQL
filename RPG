@@ -77,9 +77,9 @@ select * from Raca
 
 INSERT INTO Habilidade(Nome, MultiplicadorPoder)
 VALUES 
-	('Ataque Furtivo', 3),
-	('Arquearia', 2),
-	('Força da Natureza', 2)
+	('Ataque Furtivo', 150),
+	('Arquearia', 70),
+	('Força da Natureza', 100)
 
 select * from Habilidade
 
@@ -121,4 +121,23 @@ select * from Personagem
 --10
 
 SELECT Nome, Descricao, Origem FROM Raca WHERE Nome LIKE '%Orc%'
-select * from Raca
+
+--11
+
+SELECT COUNT(*) FROM Habilidade
+
+--12
+
+SELECT Nome, COUNT(*) QtdPersonagens FROM Classe GROUP BY Nome
+
+--13
+
+SELECT R.Nome, COUNT(IDPersonagem) QtdPersonagens FROM Raca R LEFT JOIN Personagem P ON R.IDRaca = P.IDRaca GROUP BY R.Nome
+
+--14
+
+SELECT C.Nome, AVG(H.MultiplicadorPoder) MediaPoder FROM Classe C INNER JOIN Habilidade H ON C.IDHabilidade = H.IDHabilidade GROUP BY C.Nome HAVING  AVG(H.MultiplicadorPoder) >= 100
+
+--15
+
+SELECT P.Nome, P.DataNascimento, R.Nome Raca, C.Nome Classe, H.Nome Habilidade FROM Personagem P INNER JOIN Raca R ON P.IDRaca = R.IDRaca INNER JOIN Classe C ON P.IDClasse = C.IDClasse INNER JOIN Habilidade H ON C.IDHabilidade = H.IDHabilidade
